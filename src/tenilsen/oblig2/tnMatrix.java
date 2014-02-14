@@ -48,7 +48,7 @@ public class tnMatrix {
         int costMax=31, costTemp=0, lowestCostTemp=costMax, cost=0;
         int isVisited;
         
-        while (visited < matrixSize) {
+        while (visited < matrixSize-1) {
             route[visited] = lastHouse; 
             costTemp = costMax;
             lowestCostTemp=costMax;
@@ -64,12 +64,12 @@ public class tnMatrix {
                     }
                 } 
             }
-            if (lowestCostTemp != costMax) {
+            //if (lowestCostTemp != costMax) {
                     cost += lowestCostTemp;
                     System.out.println("(" + lastHouse + ")" + numberToLetter(lastHouse) + " to (" + nextHouse + 
                             ")" + numberToLetter(nextHouse) + " cost: " +lowestCostTemp);
                     
-            }
+            //}
             lastHouse= nextHouse;
             visited++;
         }
@@ -97,10 +97,10 @@ public class tnMatrix {
     }
     public String routeToLetters() {
         String s ="";
-        for (int i=0; i<= route.length-1;i++){
+        for (int i=0; i<= route.length-2;i++){
             s += numberToLetter(route[i]) + "-";
         }
-        return s;
+        return s+thecost;
     }
     public int[][] getMatrix() {
         return theMap;
