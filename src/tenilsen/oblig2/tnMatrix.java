@@ -7,7 +7,7 @@
 
 package tenilsen.oblig2;
 
-import static tenilsen.oblig2.TenilsenOblig2.printMatrix;
+import static java.util.Arrays.asList;
 
 /**
  *
@@ -16,8 +16,9 @@ import static tenilsen.oblig2.TenilsenOblig2.printMatrix;
 public class tnMatrix {
     private final int matrixSize;
     private final int[][] theMap;
-    int[] route; // final route
+    Integer[] route; // final route
     int start; // start house
+    int thecost;
     
     public tnMatrix() {
         matrixSize = 9; //
@@ -26,18 +27,54 @@ public class tnMatrix {
             -1 = no route between houses */
         theMap = new int[][] {
         //   A, B, C, D, E, F, G, H, I
-     /*A*/ { 0,10, 8,13,-1,-1,-1,-1,-1},
-     /*B*/ {10, 0,-1,20,12,-1,-1,-1,-1},
-     /*C*/ { 8,-1, 0,30,-1,12,-1,-1,-1},
-     /*D*/ {13,20,30, 0,-1,-1,25,11,-1},
-     /*E*/ {-1,12,-1,-1, 0,-1, 5, 7,-1},
-     /*F*/ {-1,-1,12,-1,-1, 0,15,-1,-1},
-     /*G*/ {-1,-1,-1,25, 5,15, 0, 9, 8},        
-     /*H*/ {-1,-1,-1,11, 7,-1, 9, 0,10},
-     /*I*/ {-1,-1,-1,-1,-1,-1, 8,10, 0}
+     /*A*/ { 0,10, 8,13, 0, 0, 0, 0, 0},
+     /*B*/ {10, 0, 0,20,12, 0, 0, 0, 0},
+     /*C*/ { 8, 0, 0,30, 0,12, 0, 0, 0},
+     /*D*/ {13,20,30, 0, 0, 0,25,11, 0},
+     /*E*/ { 0,12, 0, 0, 0, 0, 5, 7, 0},
+     /*F*/ { 0, 0,12, 0, 0, 0,15, 0, 0},
+     /*G*/ { 0, 0, 0,25, 5,15, 0, 9, 8},        
+     /*H*/ { 0, 0, 0,11, 7, 0, 9, 0,10},
+     /*I*/ { 0, 0, 0, 0, 0, 0, 8,10, 0}
         };
     }
-    
+    public void minSpanningTree(int mStart) {
+        Integer[] routeTemp;
+        start = mStart;
+        route = new Integer[matrixSize];
+        int visited=0; // numbers of visited houses
+        int lastHouse = start; // last house visited is the first house
+        int nextHouse = 0;
+        int costMax=31, costTemp=0, lowestCostTemp=costMax, cost=0;
+        int isVisited;
+        
+        while (visited < matrixSize) {
+            route[visited] = lastHouse; 
+            costTemp = costMax;
+            lowestCostTemp=costMax;
+            for (int i = 0; i < matrixSize; i++) {
+                isVisited = asList(route).indexOf(i);
+                if ((-1 == isVisited)) {
+                    costTemp = theMap[lastHouse][i];
+                    System.out.println("evaluerer veien mellom hus #"+lastHouse + " og #" + i +" : "+costTemp);
+                    if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
+                        lowestCostTemp = costTemp;
+                        nextHouse = i;
+                        System.out.println("vi velger #"+i+" cost: "+costTemp);
+                    }
+                } 
+            }
+            if (lowestCostTemp != costMax) {
+                    cost += lowestCostTemp;
+                    System.out.println("(" + lastHouse + ")" + numberToLetter(lastHouse) + " to (" + nextHouse + 
+                            ")" + numberToLetter(nextHouse) + " cost: " +lowestCostTemp);
+                    
+            }
+            lastHouse= nextHouse;
+            visited++;
+        }
+        thecost = cost;
+    }
     @Override
      public String toString() {
          String temp;
@@ -55,10 +92,70 @@ public class tnMatrix {
     public int getMatrixSize() {
         return matrixSize;
     }
-    public int[] getRoute() {
+    public Integer[] getRoute() {
         return route;
+    }
+    public String routeToLetters() {
+        String s ="";
+        for (int i=0; i<= route.length-1;i++){
+            s += numberToLetter(route[i]) + "-";
+        }
+        return s;
     }
     public int[][] getMatrix() {
         return theMap;
+    }
+    private static String numberToLetter(int nr) {
+        switch (nr) {
+            case 0: 
+                return "A";
+            case 1: 
+                return "B";
+            case 2: 
+                return "C";
+            case 3: 
+                return "D";
+            case 4: 
+                return "E";
+            case 5: 
+                return "F";
+            case 6: 
+                return "G";
+            case 7: 
+               return "H";
+            case 8: 
+                return "I";
+            default: 
+                return "INVALID NUMBER: "+nr;
+        }
+    }
+    
+    private static int letterToNumber(String letter) {
+        switch (letter.toUpperCase()) {
+            case "A":
+                return 0;
+            case "B":
+                return 1;
+            case "C":
+                return 2;
+            case "D":
+                return 3;
+            case "E":
+                return 4;
+            case "F":
+                return 5;
+            case "G":
+                return 6;
+            case "H":
+                return 7;
+            case "I":
+                return 8;                
+            default: 
+                return -1;
+        }
+    }
+
+    public int getCost() {
+        return thecost;
     }
 }
