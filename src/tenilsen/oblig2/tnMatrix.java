@@ -3,6 +3,7 @@
  * terje.nilsen@student.hive.no
  * 
  NTL = Note To Later
+ikke tsp, mst: letteste vei fra alle kjente noder
  */
 
 package tenilsen.oblig2;
@@ -16,7 +17,7 @@ import static java.util.Arrays.asList;
 public class tnMatrix {
     private final int matrixSize;
     private final int[][] theMap;
-    Integer[] route; // final route
+    Integer[] VisitedHouses; // final route
     int start; // start house
     int thecost;
     
@@ -41,7 +42,7 @@ public class tnMatrix {
     public void minSpanningTree(int mStart) {
         Integer[] routeTemp;
         start = mStart;
-        route = new Integer[matrixSize];
+        VisitedHouses = new Integer[matrixSize];
         int visited=0; // numbers of visited houses
         int lastHouse = start; // last house visited is the first house
         int nextHouse = 0;
@@ -49,11 +50,12 @@ public class tnMatrix {
         int isVisited;
         
         while (visited < matrixSize-1) {
-            route[visited] = lastHouse; 
+            VisitedHouses[visited] = lastHouse; 
             costTemp = costMax;
             lowestCostTemp=costMax;
-            for (int i = 0; i < matrixSize; i++) {
-                isVisited = asList(route).indexOf(i);
+            
+            for (int i = 0; i < matrixSize-1; i++) {
+                isVisited = asList(VisitedHouses).indexOf(i);
                 if ((-1 == isVisited)) {
                     costTemp = theMap[lastHouse][i];
                     System.out.println("evaluerer veien mellom hus #"+lastHouse + " og #" + i +" : "+costTemp);
@@ -93,12 +95,12 @@ public class tnMatrix {
         return matrixSize;
     }
     public Integer[] getRoute() {
-        return route;
+        return VisitedHouses;
     }
     public String routeToLetters() {
         String s ="";
-        for (int i=0; i<= route.length-2;i++){
-            s += numberToLetter(route[i]) + "-";
+        for (int i=0; i<= VisitedHouses.length-2;i++){
+            s += numberToLetter(VisitedHouses[i]) + "-";
         }
         return s+thecost;
     }
