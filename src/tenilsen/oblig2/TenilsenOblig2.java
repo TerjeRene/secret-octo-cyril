@@ -1,6 +1,20 @@
 /*
  * DA-ALG1000, Oblig 2,2014
  * Terje Rene E. Nilsen - terje.nilsen@student.hive.no
+
+Oppgaven:
+I følgende figur tenker vi oss at nodene A, B, C, D, E, F, G, H og I indikerer 
+hus. Kantene mellom husene indikerer at det kan trekkes en kabel for telefon 
+mellom 2 hus til en kostnad av det tallet som er oppgitt ved den tilhørende 
+kanten. Prisen er oppgitt i antall 1000 kr. Programmér en løsning slik at alle 
+hus er tilknyttet og at total kostnad er minst mulig. Man skal kunne finne samme 
+løsning uansett hvilken node/hus man starter i. Benytt teknikken med 
+2-dimensjonal matrise som ble gjennomgått i forelesninga mandag 25. februar. 
+Programmet skal skrive ut total kostnad og hvilke hus som parvis velges 
+underveis. Oppgaven leveres som én fil (gjerne .zip) og rapport skal være med 
+i samme fila!). Oppgaven skal som sagt, løses vha. en tabell-representasjon av 
+grafen, men forsøk dere gjerne på en annen metode i tillegg, men ikke en finn et 
+program som kopieres fra Internett! Lykke til!
  */
 
 package tenilsen.oblig2;
@@ -36,7 +50,7 @@ public class TenilsenOblig2 {
        
        // while (programRunning) {
              tnMatrix x = new tnMatrix();
-             x.minSpanningTree(0);
+             x.minimalSpanningTree(0);
              
              
              
@@ -50,9 +64,11 @@ public class TenilsenOblig2 {
             System.out.println("cost between "+ m1.toUpperCase() + " and "+ m2.toUpperCase() +": " + theMap[letterToNumber(m1)][letterToNumber(m2)]);
             System.out.println("cost between "+ m2.toUpperCase() + " and "+ m1.toUpperCase() +": " + theMap[letterToNumber(m2)][letterToNumber(m1)]);
                   */ 
-             System.out.println(x.routeToLetters());
-             scannerInput = new Scanner(System.in);  
-             int userChoice = scannerInput.nextInt();
+             System.out.println("");
+             System.out.println(x.theConnections);
+               System.out.println(x.thecost);
+             //scannerInput = new Scanner(System.in);  
+            // int userChoice = scannerInput.nextInt();
              programRunning = false;
         // }
     }

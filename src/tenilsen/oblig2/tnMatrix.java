@@ -19,7 +19,8 @@ public class tnMatrix {
     private final int[][] theMap;
     Integer[] VisitedHouses; // final route
     int start; // start house
-    int thecost;
+    int thecost=0;
+    String theConnections="";
     
     public tnMatrix() {
         matrixSize = 9; //
@@ -39,6 +40,61 @@ public class tnMatrix {
      /*I*/ { 0, 0, 0, 0, 0, 0, 8,10, 0}
         };
     }
+    public void minimalSpanningTree (int mStart) {
+        int[] visitedNodes = new int[matrixSize];
+        int visitedNodesNumber = 1;
+        int nextNode;
+        
+        visitedNodes[0] = mStart; // we start here
+        
+        while (visitedNodesNumber < (matrixSize)) {
+            visitedNodes[visitedNodesNumber] = findNextConnection(visitedNodes,visitedNodesNumber); // next node
+            visitedNodesNumber++;
+        }
+        //return visitedNodes;
+    }
+    
+
+    private int findNextConnection(int[] visitedNodes, int visitedNodesNumber) {
+        int costTemp;
+        int lowestCostTemp = 100; // a number bigger than the biggest cost
+        int nextHouse = -1; // returns -1 if something goes wrong
+        int fromHouse = visitedNodes[0];
+        int fromHouseTemp;
+        for (int i = 0; i <= visitedNodesNumber; i++) {
+            fromHouseTemp = visitedNodes[i];
+            for (int h = 0; h < matrixSize; h++) {
+               //boolean i44sVisited = checkInArray(h,visitedNodes);
+                if (!checkInArray(h, visitedNodes)) { // if we didnt visit h, evaluate it
+                    costTemp = theMap[fromHouseTemp][h];
+                    System.out.println("eval: "+ numberToLetter(fromHouseTemp) + " and " + numberToLetter(h) +" : "+costTemp);
+                    if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
+                        lowestCostTemp = costTemp;
+                        nextHouse = h;
+                        fromHouse = fromHouseTemp;
+                        System.out.println("lowest : " + numberToLetter(fromHouse) + " and "+ numberToLetter(h) +" : "+lowestCostTemp);
+                    }
+                } 
+            }
+        }
+        System.out.println("#### [" + numberToLetter(fromHouse) + ","+ numberToLetter(nextHouse) +"] cost: "+lowestCostTemp);
+        theConnections += "[" + numberToLetter(fromHouse) + ","+ numberToLetter(nextHouse) +"] \n"; // NTL: wtf mate?
+        thecost += lowestCostTemp;
+         return nextHouse;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    /*  checkInArray() 
+    hentet 18.feb.2014 fra:
+    http://www.dreamincode.net/forums/topic/239725-check-if-a-number-is-in-array/page__view__findpost__p__1389223
+    */
+    private static boolean checkInArray(int currentState, int[] myArray) {
+        boolean found = false;
+        for (int i = 0; !found && (i < myArray.length); i++) {
+            found = (myArray[i] == currentState);
+        }
+        return found;
+    }
+
     public void minSpanningTree(int mStart) {
         Integer[] routeTemp;
         start = mStart;
@@ -62,7 +118,7 @@ public class tnMatrix {
                     if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
                         lowestCostTemp = costTemp;
                         nextHouse = i;
-                        System.out.println("vi velger #"+i+" cost: "+costTemp);
+                        System.out.println("#### " +i+" cost: "+costTemp);
                     }
                 } 
             }
@@ -99,7 +155,7 @@ public class tnMatrix {
     }
     public String routeToLetters() {
         String s ="";
-        for (int i=0; i<= VisitedHouses.length-2;i++){
+        for (int i=0; i<= VisitedHouses.length-1;i++){
             s += numberToLetter(VisitedHouses[i]) + "-";
         }
         return s+thecost;
