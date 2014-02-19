@@ -32,8 +32,8 @@ public class TenilsenOblig2 {
     private static Scanner scannerInput; // user input for the menu.
     
     public static void main(String[] args) {
-        // application magic here
-        System.out.println("DA-ALG1000 - Oblig 1");
+        // application magic here:
+        System.out.println("DA-ALG1000 - Oblig 2");
         System.out.println("Terje Rene E. Nilsen - terje.nilsen@student.hive.no\n");
         
         // Variables:
@@ -52,7 +52,7 @@ public class TenilsenOblig2 {
         System.out.println("The total cost: " + ourMap.getCost());
          
         System.out.println("\nPress 0 for menu.");
-          //  ourMap.setDebug(true);
+        
       while (programRunning) {
           try {
             System.out.print(":");
@@ -113,11 +113,8 @@ public class TenilsenOblig2 {
         catch(InputMismatchException | NumberFormatException e){
            System.out.println("Input error. " + "\n" +
                     "Enter 0 for menu, 5 for exit.");
-
         }
-                
       }
-    
     }
   
     private static void printMenu() {

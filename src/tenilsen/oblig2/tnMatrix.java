@@ -2,7 +2,7 @@
  * DA-ALG1000, Oblig 2, 2014.
  * terje.nilsen@student.hive.no (tenilsen)
  *
- * NTL - Not To Later.
+ * 
  */
 
 package tenilsen.oblig2;
@@ -17,6 +17,7 @@ import java.util.Arrays;
  * Some standard values is set to -1, makes spotting errors easier.
  * The matrix (map) is given by the assignment, but tnMatrix also supports
  * custom map.
+ * NTL is short for Not To Later.
  */
 public class tnMatrix  {
     // NTL: final = may only be init once.
@@ -42,9 +43,9 @@ public class tnMatrix  {
     
     public tnMatrix() {
         matrixSize = 9; //
-        /* The map of houses
-            Value = cost between houses
-            0 = no route between houses */
+        /* The map of houses.
+            Value = cost between houses.
+            0 = no route between houses. */
         theMap = new int[][] {
         //   A, B, C, D, E, F, G, H, I
      /*A*/ { 0,10, 8,13, 0, 0, 0, 0, 0},
@@ -84,7 +85,7 @@ public class tnMatrix  {
     private int findNextConnection(int[] visitedNodes, int visitedNodesNumber) {
         int costTemp;
         int lowestCostTemp = biggestValue; // A number bigger than the biggest cost.
-        int nextNode = -1; // Returns -1 if something goes wrong.
+        int nextNode = -1; 
         int fromNode = -1;
         int fromNodeTemp;
         for (int i = 0; i < visitedNodesNumber; i++) {
