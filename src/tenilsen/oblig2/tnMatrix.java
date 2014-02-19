@@ -18,7 +18,7 @@ import java.util.Arrays;
  * The matrix (map) is given by the assignment, but tnMatrix also supports
  * custom map.
  */
-public class tnMatrix extends Exception {
+public class tnMatrix  {
     // NTL: final = may only be init once.
     private final int matrixSize; 
     private final int[][] theMap; 
