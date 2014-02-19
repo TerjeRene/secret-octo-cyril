@@ -1,32 +1,50 @@
 /*
- * Terje Rene E. Nilsen, 2014
- * terje.nilsen@student.hive.no
- * 
- NTL = Note To Later
-ikke tsp, mst: letteste vei fra alle kjente noder
+ * DA-ALG1000, Oblig 2, 2014.
+ * terje.nilsen@student.hive.no (tenilsen)
+ *
+ * NTL - Not To Later.
  */
 
 package tenilsen.oblig2;
 
-import static java.util.Arrays.asList;
+import java.util.Arrays;
 
 /**
  *
- * @author rene
+ * @author Terje Rene E. Nilsen - terje.nilsen@student.hive.no (tenilsen).
+ * NOTES:
+ * _All_ counting starts on 0. 
+ * Some standard values is set to -1, makes spotting errors easier.
+ * The matrix (map) is given by the assignment, but tnMatrix also supports
+ * custom map.
  */
-public class tnMatrix {
-    private final int matrixSize;
-    private final int[][] theMap;
-    Integer[] VisitedHouses; // final route
-    int start; // start house
-    int thecost=0;
-    String theConnections="";
+public class tnMatrix extends Exception {
+    // NTL: final = may only be init once.
+    private final int matrixSize; 
+    private final int[][] theMap; 
+    private int theCost;
+    private final int biggestValue = 100; /* Make sure this is bigger than the 
+    biggest cost. It is used as an initiation value for 'lowestCostTemp' in
+    findNextConnection(). Putting it here to avoid "spaghetti-code".    */
+    // String theConnections = ""; // NTL: for extensive debug. 
+    private boolean tnDebug = false; // For debug. 
+    String [] connectedNodes; /* Holds the connected nodes as strings.
+                                Like this: [from,to]
+                                          [A,C] 
+                                          [A,B] 
+                                          [C,F] 
+                                          [B,E] 
+                                          [E,G] 
+                                          [E,H] 
+                                          [G,I] 
+                                          [H,D] 
+                                */
     
     public tnMatrix() {
         matrixSize = 9; //
         /* The map of houses
             Value = cost between houses
-            -1 = no route between houses */
+            0 = no route between houses */
         theMap = new int[][] {
         //   A, B, C, D, E, F, G, H, I
      /*A*/ { 0,10, 8,13, 0, 0, 0, 0, 0},
@@ -40,51 +58,58 @@ public class tnMatrix {
      /*I*/ { 0, 0, 0, 0, 0, 0, 8,10, 0}
         };
     }
-    public void minimalSpanningTree (int mStart) {
-        int[] visitedNodes = new int[matrixSize];
-        int visitedNodesNumber = 1;
-        int nextNode;
-        
-        visitedNodes[0] = mStart; // we start here
-        
-        while (visitedNodesNumber < (matrixSize)) {
-            visitedNodes[visitedNodesNumber] = findNextConnection(visitedNodes,visitedNodesNumber); // next node
-            visitedNodesNumber++;
-        }
-        //return visitedNodes;
+    public tnMatrix (int[][] givenMatrixMap, int givenMatrixSize) {
+        // Just in case I later want to reuse this code - tenilsen.
+        matrixSize = givenMatrixSize; 
+        theMap = Arrays.copyOf(givenMatrixMap, matrixSize);
     }
     
+    public void minimalSpanningTree(int mStart) {
+        theCost = 0; // Better reset this..
+        connectedNodes = new String [matrixSize-1]; // ..and this.
+        int[] visitedNodes = new int[matrixSize]; // The nodes we have visited.
+        Arrays.fill(visitedNodes, -1); /* Fill with a number we do not use
+        If visitedNodes[] is full of 0 it breaks checkInArray() used in
+        findNextConnection(). */
+        
+        visitedNodes[0] = mStart; // We start here..
+        int visitedNodesNumber = 1; // ..and continue to this.
 
+        while (visitedNodesNumber < (matrixSize)) {
+            visitedNodes[visitedNodesNumber] = findNextConnection(visitedNodes,visitedNodesNumber); // Find next node.
+            visitedNodesNumber++;
+        }
+    }
+    
     private int findNextConnection(int[] visitedNodes, int visitedNodesNumber) {
         int costTemp;
-        int lowestCostTemp = 100; // a number bigger than the biggest cost
-        int nextHouse = -1; // returns -1 if something goes wrong
-        int fromHouse = visitedNodes[0];
-        int fromHouseTemp;
-        for (int i = 0; i <= visitedNodesNumber; i++) {
-            fromHouseTemp = visitedNodes[i];
+        int lowestCostTemp = biggestValue; // A number bigger than the biggest cost.
+        int nextNode = -1; // Returns -1 if something goes wrong.
+        int fromNode = -1;
+        int fromNodeTemp;
+        for (int i = 0; i < visitedNodesNumber; i++) {
+            fromNodeTemp = visitedNodes[i]; //
             for (int h = 0; h < matrixSize; h++) {
-               //boolean i44sVisited = checkInArray(h,visitedNodes);
-                if (!checkInArray(h, visitedNodes)) { // if we didnt visit h, evaluate it
-                    costTemp = theMap[fromHouseTemp][h];
-                    System.out.println("eval: "+ numberToLetter(fromHouseTemp) + " and " + numberToLetter(h) +" : "+costTemp);
+                if (!checkInArray(h, visitedNodes)) { // If we didnt visit h, evaluate it.
+                    costTemp = theMap[fromNodeTemp][h];
+                    printDebug("eval: "+ numberToLetter(fromNodeTemp) + " and " + numberToLetter(h) +" : "+costTemp);
                     if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
-                        lowestCostTemp = costTemp;
-                        nextHouse = h;
-                        fromHouse = fromHouseTemp;
-                        System.out.println("lowest : " + numberToLetter(fromHouse) + " and "+ numberToLetter(h) +" : "+lowestCostTemp);
+                        lowestCostTemp = costTemp; // Found a new lowest cost!
+                        nextNode = h; // The lowest cost is between this node..
+                        fromNode = fromNodeTemp; // ..and this node.
+                        printDebug("lowest : " + numberToLetter(fromNode) + " and "+ numberToLetter(h) +" : "+lowestCostTemp);
                     }
                 } 
             }
         }
-        System.out.println("#### [" + numberToLetter(fromHouse) + ","+ numberToLetter(nextHouse) +"] cost: "+lowestCostTemp);
-        theConnections += "[" + numberToLetter(fromHouse) + ","+ numberToLetter(nextHouse) +"] \n"; // NTL: wtf mate?
-        thecost += lowestCostTemp;
-         return nextHouse;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        printDebug("choosing: [" + numberToLetter(fromNode) + ","+ numberToLetter(nextNode) +"] cost: "+lowestCostTemp);
+        //theConnections += "[" + numberToLetter(fromNode) + ","+ numberToLetter(nextNode) +"] \n"; // debug
+        connectedNodes[visitedNodesNumber-1] = numberToLetter(fromNode) + " "+ numberToLetter(nextNode);
+        theCost += lowestCostTemp;
+         return nextNode;
     }
-    /*  checkInArray() 
-    hentet 18.feb.2014 fra:
+    /*  checkInArray() I borrowed this since there is no .indexOf() for arrays in java.
+    Acuired from:
     http://www.dreamincode.net/forums/topic/239725-check-if-a-number-is-in-array/page__view__findpost__p__1389223
     */
     private static boolean checkInArray(int currentState, int[] myArray) {
@@ -95,71 +120,42 @@ public class tnMatrix {
         return found;
     }
 
-    public void minSpanningTree(int mStart) {
-        Integer[] routeTemp;
-        start = mStart;
-        VisitedHouses = new Integer[matrixSize];
-        int visited=0; // numbers of visited houses
-        int lastHouse = start; // last house visited is the first house
-        int nextHouse = 0;
-        int costMax=31, costTemp=0, lowestCostTemp=costMax, cost=0;
-        int isVisited;
-        
-        while (visited < matrixSize-1) {
-            VisitedHouses[visited] = lastHouse; 
-            costTemp = costMax;
-            lowestCostTemp=costMax;
-            
-            for (int i = 0; i < matrixSize-1; i++) {
-                isVisited = asList(VisitedHouses).indexOf(i);
-                if ((-1 == isVisited)) {
-                    costTemp = theMap[lastHouse][i];
-                    System.out.println("evaluerer veien mellom hus #"+lastHouse + " og #" + i +" : "+costTemp);
-                    if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
-                        lowestCostTemp = costTemp;
-                        nextHouse = i;
-                        System.out.println("#### " +i+" cost: "+costTemp);
-                    }
-                } 
-            }
-            //if (lowestCostTemp != costMax) {
-                    cost += lowestCostTemp;
-                    System.out.println("(" + lastHouse + ")" + numberToLetter(lastHouse) + " to (" + nextHouse + 
-                            ")" + numberToLetter(nextHouse) + " cost: " +lowestCostTemp);
-                    
-            //}
-            lastHouse= nextHouse;
-            visited++;
-        }
-        thecost = cost;
-    }
     @Override
-     public String toString() {
-         String temp;
-            temp= ("\n");
+    public String toString() {
+         String temp="", caption=" ";
+         // No spaghetti-coded caption. Prof. Milica Barjaktarovic would approve.
             for (int w = 0; w < matrixSize; w++) {
+                caption += "  " + numberToLetter(w);
+                temp += numberToLetter(w) + " ";
                 for (int i = 0; i < matrixSize; i++)
                 {
+                    if (theMap[w][i] < 10) {
+                        temp += " ";
+                    } 
                     temp +=(theMap[w][i] + " ");
                 }
                 temp += ("\n");
             }
             temp +=("\n");
-       return temp;
+            caption +=("\n");
+       return caption + temp;
+    }
+    
+    public String nodesToStringFancy() {
+        String theReturn = "";
+        String[] sortedNodes = Arrays.copyOf(connectedNodes, matrixSize-1);
+        Arrays.sort(sortedNodes, 0, matrixSize-1); // NTL: start and end needed for arrays < 10 elements.
+        theReturn += "Original:\tSorted:\n"; 
+        for (int i = 0; i < matrixSize-1; i++) {
+            theReturn += "\t[" + connectedNodes[i] + "] \t" +
+                    "[" + sortedNodes[i] +"] \n";
+        }
+        return theReturn;
     }
     public int getMatrixSize() {
         return matrixSize;
     }
-    public Integer[] getRoute() {
-        return VisitedHouses;
-    }
-    public String routeToLetters() {
-        String s ="";
-        for (int i=0; i<= VisitedHouses.length-1;i++){
-            s += numberToLetter(VisitedHouses[i]) + "-";
-        }
-        return s+thecost;
-    }
+    
     public int[][] getMatrix() {
         return theMap;
     }
@@ -214,6 +210,18 @@ public class tnMatrix {
     }
 
     public int getCost() {
-        return thecost;
+        return theCost;
+    }
+    // stuff for debuging:
+    public void setDebug(boolean theNewStatus) {
+        tnDebug = theNewStatus;
+    }
+    public boolean getDebug() {
+        return tnDebug;
+    }
+    private void printDebug(String theDebugMessage) {
+        if (tnDebug) {
+            System.out.println(theDebugMessage);
+        }
     }
 }

@@ -1,8 +1,8 @@
 /*
- * DA-ALG1000, Oblig 2,2014
- * Terje Rene E. Nilsen - terje.nilsen@student.hive.no
+ * DA-ALG1000, Oblig 2, 2014.
+ * Terje Rene E. Nilsen - terje.nilsen@student.hive.no (tenilsen).
 
-Oppgaven:
+The assignment:
 I følgende figur tenker vi oss at nodene A, B, C, D, E, F, G, H og I indikerer 
 hus. Kantene mellom husene indikerer at det kan trekkes en kabel for telefon 
 mellom 2 hus til en kostnad av det tallet som er oppgitt ved den tilhørende 
@@ -19,73 +19,117 @@ program som kopieres fra Internett! Lykke til!
 
 package tenilsen.oblig2;
 
-import java.util.Random;
-import java.util.Scanner;
+import java.util.InputMismatchException;
+import java.util.Random; // for the lazy users.
+import java.util.Scanner; // Used for the menu.
 
 /**
  *
- * @author rene
+ * @author Terje Rene E. Nilsen - terje.nilsen@student.hive.no (tenilsen).
  */
 public class TenilsenOblig2 {
-    /**
-     * @param args the command line arguments
-     */
       
-        /* debug settings */      
-        static boolean printMatrix = false; 
-        static boolean printRoute = true;
-        static boolean printDebug = true; // print debug messages?
-        static int debugLevel = 3;/* 1 = få informative mld (hvor i koden programmet kjører), 
-                                   * 2 = utprint av ruter, startHouse
-                                   * 3 = full debug (meldinger i while loops)
-                                   * eks: 
-                                        doPrintDebug("Generating variables, matrix size: "+strMat+"x"+strMat+"..", 1);
-                                   * uten level = full debug:
-                                        doPrintDebug("Generating variables, matrix size: "+strMat+"x"+strMat+"..");
-                                   * */
-    private static Scanner scannerInput;
+    private static Scanner scannerInput; // user input for the menu.
+    
     public static void main(String[] args) {
+        // application magic here
+        System.out.println("DA-ALG1000 - Oblig 1");
+        System.out.println("Terje Rene E. Nilsen - terje.nilsen@student.hive.no\n");
         
+        // Variables:
         boolean programRunning = true; 
-       
-       // while (programRunning) {
-             tnMatrix x = new tnMatrix();
-             x.minimalSpanningTree(0);
-             
-             
-             
-             
-             
-             
-            //System.out.print(":"); 
-             /*
-             String m1 = "G", m2 = "H";
-            debug: 
-            System.out.println("cost between "+ m1.toUpperCase() + " and "+ m2.toUpperCase() +": " + theMap[letterToNumber(m1)][letterToNumber(m2)]);
-            System.out.println("cost between "+ m2.toUpperCase() + " and "+ m1.toUpperCase() +": " + theMap[letterToNumber(m2)][letterToNumber(m1)]);
-                  */ 
-             System.out.println("");
-             System.out.println(x.theConnections);
-               System.out.println(x.thecost);
-             //scannerInput = new Scanner(System.in);  
-            // int userChoice = scannerInput.nextInt();
-             programRunning = false;
-        // }
+        Random ranm = new Random();
+        int userChoice, startHouse;
+        
+        tnMatrix ourMap = new tnMatrix(); // Creating our map (matrix).
+        
+        startHouse = ranm.nextInt(ourMap.getMatrixSize()-1); // Random start house based on the matrix size.
+        System.out.println("Starting in random house: " + numberToLetter(startHouse));
+        
+        ourMap.minimalSpanningTree(startHouse); // Do the calculation.
+        
+        System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
+        System.out.println("The total cost: " + ourMap.getCost());
+         
+        System.out.println("\nPress 0 for menu.");
+          //  ourMap.setDebug(true);
+      while (programRunning) {
+          try {
+            System.out.print(":");
+            scannerInput = new Scanner(System.in);  
+            userChoice = scannerInput.nextInt();
+
+
+            switch (userChoice) {
+                case 0: // Show menu.
+                    printMenu();
+                    break;
+                case 1: // .
+                    startHouse = ranm.nextInt(ourMap.getMatrixSize()-1); // Random start house based on the matrix size.
+                    System.out.println("Starting in random house: " + numberToLetter(startHouse));
+
+                    ourMap.minimalSpanningTree(startHouse); // Do the calculation.
+
+                    System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
+                    System.out.println("The total cost: " + ourMap.getCost());
+                    break;
+                case 2: // .
+                    System.out.println("Enter a number between 0 and " + (ourMap.getMatrixSize()-1));
+                    System.out.println("OR a letter between "+numberToLetter(0)+" and " + numberToLetter(ourMap.getMatrixSize()-1));
+                    try {
+                        scannerInput = new Scanner(System.in);  
+                        userChoice = scannerInput.nextInt();
+                    }
+                    catch (InputMismatchException e){
+                        userChoice = letterToNumber(scannerInput.next());
+                    }
+                   try {
+
+                        ourMap.minimalSpanningTree(userChoice); // Do the calculation.
+                        System.out.println("Starting in house: " + numberToLetter(userChoice));
+
+                        System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
+                        System.out.println("The total cost: " + ourMap.getCost());
+                   }
+                    catch (ArrayIndexOutOfBoundsException e) {
+                        throw new InputMismatchException(); // uhm.. 
+                    }
+                    break;
+                case 3: // Print matrix.
+                    System.out.println(ourMap.toString()); // Matrix toString().
+                    break;
+                case 4: // Toggle debug mode.
+                    ourMap.setDebug(!ourMap.getDebug());
+                    System.out.println("Debug mode set to " + ourMap.getDebug() + ".");
+                    break;
+                case 5: // User wants to exit.
+                    scannerInput.close(); programRunning = false;
+                    break;
+                default: // Wrong choice.
+                    System.out.println("No such choice. " + "Enter a value from 0-5");
+                    break;
+            }
+        }
+        catch(InputMismatchException | NumberFormatException e){
+           System.out.println("Input error. " + "\n" +
+                    "Enter 0 for menu, 5 for exit.");
+
+        }
+                
+      }
+    
     }
   
-   
-    
-    private static void doPrintDebug(String stringToPrint) {
-        if (printDebug) {
-            System.out.println(stringToPrint);
-        }
+    private static void printMenu() {
+        System.out.println("");
+        System.out.println("Menu:");
+        System.out.println("0: Show menu. \n" +
+"1: Recalculate with new random start house. \n" +
+"2: Recalculate with user selected start house. \n" +
+"3: Print matrix. \n" +
+"4: Toggle debug output. \n" +
+"5: Exit. \n" );   
     }
-    private static void doPrintDebug(String stringToPrint, int level) {
-        if ((printDebug) && (debugLevel >= level)) {
-            System.out.println(stringToPrint);
-        }
-    }
-    
     
     private static String numberToLetter(int nr) {
         switch (nr) {
