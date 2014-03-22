@@ -20,8 +20,10 @@ program som kopieres fra Internett! Lykke til!
 package tenilsen.oblig2;
 
 import java.util.InputMismatchException;
-import java.util.Random; // for the lazy users.
+import java.util.Random; 
 import java.util.Scanner; // Used for the menu.
+import static tenilsen.oblig2.tnMatrix.letterToNumber;
+import static tenilsen.oblig2.tnMatrix.numberToLetter;
 
 /**
  *
@@ -49,8 +51,7 @@ public class TenilsenOblig2 {
         ourMap.minimalSpanningTree(startHouse); // Do the calculation.
         
         System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
-        System.out.println("The total cost: " + ourMap.getCost());
-         
+        System.out.println("The total cost kr: " + ourMap.getCost()*1000 + ",-"); 
         System.out.println("\nPress 0 for menu.");
         
       while (programRunning) {
@@ -58,7 +59,6 @@ public class TenilsenOblig2 {
             System.out.print(":");
             scannerInput = new Scanner(System.in);  
             userChoice = scannerInput.nextInt();
-
 
             switch (userChoice) {
                 case 0: // Show menu.
@@ -71,17 +71,18 @@ public class TenilsenOblig2 {
                     ourMap.minimalSpanningTree(startHouse); // Do the calculation.
 
                     System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
-                    System.out.println("The total cost: " + ourMap.getCost());
+                    System.out.println("The total cost kr: " + ourMap.getCost()*1000 + ",-");
                     break;
                 case 2: // .
                     System.out.println("Enter a number between 0 and " + (ourMap.getMatrixSize()-1));
                     System.out.println("OR a letter between "+numberToLetter(0)+" and " + numberToLetter(ourMap.getMatrixSize()-1));
                     try {
                         scannerInput = new Scanner(System.in);  
-                        userChoice = scannerInput.nextInt();
+                        userChoice = scannerInput.nextInt(); // Get number from user
                     }
                     catch (InputMismatchException e){
-                        userChoice = letterToNumber(scannerInput.next());
+                        // We didnt get a number, maybe it was a letter
+                        userChoice = letterToNumber(scannerInput.next()); 
                     }
                    try {
 
@@ -89,30 +90,33 @@ public class TenilsenOblig2 {
                         System.out.println("Starting in house: " + numberToLetter(userChoice));
 
                         System.out.println(ourMap.nodesToStringFancy()); // Print the connected nodes.
-                        System.out.println("The total cost: " + ourMap.getCost());
+                        System.out.println("The total cost kr: " + ourMap.getCost()*1000 + ",-");
                    }
                     catch (ArrayIndexOutOfBoundsException e) {
+                        //System.out.println("No such house");
                         throw new InputMismatchException(); // uhm.. 
                     }
                     break;
                 case 3: // Print matrix.
                     System.out.println(ourMap.toString()); // Matrix toString().
                     break;
-                case 4: // Toggle debug mode.
+                case 4: // User wants to exit.
+                    scannerInput.close(); programRunning = false;
+                    break;
+                    /*
+                case 5: // Toggle debug mode.
                     ourMap.setDebug(!ourMap.getDebug());
                     System.out.println("Debug mode set to " + ourMap.getDebug() + ".");
                     break;
-                case 5: // User wants to exit.
-                    scannerInput.close(); programRunning = false;
-                    break;
+                            */
                 default: // Wrong choice.
-                    System.out.println("No such choice. " + "Enter a value from 0-5");
+                    System.out.println("No such choice. " + "Enter a value from 0-4");
                     break;
             }
         }
         catch(InputMismatchException | NumberFormatException e){
            System.out.println("Input error. " + "\n" +
-                    "Enter 0 for menu, 5 for exit.");
+                    "Enter 0 for menu, 4 for exit.");
         }
       }
     }
@@ -124,57 +128,8 @@ public class TenilsenOblig2 {
 "1: Recalculate with new random start house. \n" +
 "2: Recalculate with user selected start house. \n" +
 "3: Print matrix. \n" +
-"4: Toggle debug output. \n" +
-"5: Exit. \n" );   
+"4: Exit. \n");
+//+"5: Toggle debug. \n" );  // debug 
     }
-    
-    private static String numberToLetter(int nr) {
-        switch (nr) {
-            case 0: 
-                return "A";
-            case 1: 
-                return "B";
-            case 2: 
-                return "C";
-            case 3: 
-                return "D";
-            case 4: 
-                return "E";
-            case 5: 
-                return "F";
-            case 6: 
-                return "G";
-            case 7: 
-               return "H";
-            case 8: 
-                return "I";
-            default: 
-                return "INVALID NUMBER: "+nr;
-        }
-    }
-    
-    private static int letterToNumber(String letter) {
-        switch (letter.toUpperCase()) {
-            case "A":
-                return 0;
-            case "B":
-                return 1;
-            case "C":
-                return 2;
-            case "D":
-                return 3;
-            case "E":
-                return 4;
-            case "F":
-                return 5;
-            case "G":
-                return 6;
-            case "H":
-                return 7;
-            case "I":
-                return 8;                
-            default: 
-                return -1;
-        }
-    }
+  
 }

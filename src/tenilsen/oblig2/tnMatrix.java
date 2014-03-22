@@ -27,8 +27,6 @@ public class tnMatrix  {
     private final int biggestValue = 100; /* Make sure this is bigger than the 
     biggest cost. It is used as an initiation value for 'lowestCostTemp' in
     findNextConnection(). Putting it here to avoid "spaghetti-code".    */
-    // String theConnections = ""; // NTL: for extensive debug. 
-    private boolean tnDebug = false; // For debug. 
     String [] connectedNodes; /* Holds the connected nodes as strings.
                                 Like this: [from,to]
                                           [A,C] 
@@ -40,6 +38,9 @@ public class tnMatrix  {
                                           [G,I] 
                                           [H,D] 
                                 */
+    
+    // private boolean tnDebug = false; // For debug. 
+    // String theConnections = ""; // NTL: for extensive debug. 
     
     public tnMatrix() {
         matrixSize = 9; //
@@ -93,22 +94,24 @@ public class tnMatrix  {
             for (int h = 0; h < matrixSize; h++) {
                 if (!checkInArray(h, visitedNodes)) { // If we didnt visit h, evaluate it.
                     costTemp = theMap[fromNodeTemp][h];
-                    printDebug("eval: "+ numberToLetter(fromNodeTemp) + " and " + numberToLetter(h) +" : "+costTemp);
+                    // printDebug("eval: "+ numberToLetter(fromNodeTemp) + " and " + numberToLetter(h) +" : "+costTemp); //debug
                     if ((costTemp < lowestCostTemp) && (costTemp != 0)) {
                         lowestCostTemp = costTemp; // Found a new lowest cost!
                         nextNode = h; // The lowest cost is between this node..
                         fromNode = fromNodeTemp; // ..and this node.
-                        printDebug("lowest : " + numberToLetter(fromNode) + " and "+ numberToLetter(h) +" : "+lowestCostTemp);
+                        // printDebug("lowest : " + numberToLetter(fromNode) + " and "+ numberToLetter(h) +" : "+lowestCostTemp); //debug
                     }
                 } 
             }
         }
-        printDebug("choosing: [" + numberToLetter(fromNode) + ","+ numberToLetter(nextNode) +"] cost: "+lowestCostTemp);
+        // printDebug("choosing: [" + numberToLetter(fromNode) + ","+ numberToLetter(nextNode) +"] cost: "+lowestCostTemp); //debug
         //theConnections += "[" + numberToLetter(fromNode) + ","+ numberToLetter(nextNode) +"] \n"; // debug
         connectedNodes[visitedNodesNumber-1] = numberToLetter(fromNode) + " "+ numberToLetter(nextNode);
         theCost += lowestCostTemp;
          return nextNode;
     }
+    
+    
     /*  checkInArray() I borrowed this since there is no .indexOf() for arrays in java.
     Acuired from:
     http://www.dreamincode.net/forums/topic/239725-check-if-a-number-is-in-array/page__view__findpost__p__1389223
@@ -146,7 +149,7 @@ public class tnMatrix  {
         String theReturn = "";
         String[] sortedNodes = Arrays.copyOf(connectedNodes, matrixSize-1);
         Arrays.sort(sortedNodes, 0, matrixSize-1); // NTL: start and end needed for arrays < 10 elements.
-        theReturn += "Original:\tSorted:\n"; 
+        theReturn += "Chronological:\tSorted:\n"; 
         for (int i = 0; i < matrixSize-1; i++) {
             theReturn += "\t[" + connectedNodes[i] + "] \t" +
                     "[" + sortedNodes[i] +"] \n";
@@ -160,7 +163,7 @@ public class tnMatrix  {
     public int[][] getMatrix() {
         return theMap;
     }
-    private static String numberToLetter(int nr) {
+    public static String numberToLetter(int nr) {
         switch (nr) {
             case 0: 
                 return "A";
@@ -185,7 +188,7 @@ public class tnMatrix  {
         }
     }
     
-    private static int letterToNumber(String letter) {
+    public static int letterToNumber(String letter) {
         switch (letter.toUpperCase()) {
             case "A":
                 return 0;
@@ -214,6 +217,7 @@ public class tnMatrix  {
         return theCost;
     }
     // stuff for debuging:
+    /*
     public void setDebug(boolean theNewStatus) {
         tnDebug = theNewStatus;
     }
@@ -225,4 +229,5 @@ public class tnMatrix  {
             System.out.println(theDebugMessage);
         }
     }
+    */
 }
